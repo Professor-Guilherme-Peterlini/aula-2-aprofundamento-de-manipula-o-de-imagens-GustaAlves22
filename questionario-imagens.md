@@ -43,10 +43,13 @@
       R: O operador Sobel utiliza dois filtros 3x3 para calcular os gradientes horizontal e vertical de uma imagem, permitindo detectar bordas. Ele calcula a magnitude do gradiente em cada pixel, destacando mudanças significativas de intensidade, o que é útil para localizar bordas em imagens.
    
    * Prewitt
-      R: O operador Prewitt detecta bordas em imagens aplicando dois filtros 3x3 para calcular os gradientes nas direções horizontal e vertical. Ele é simples, eficiente e eficaz para detectar bordas em imagens com transições suaves
+      R: O operador Prewitt detecta bordas em imagens aplicando dois filtros 3x3 para calcular os gradientes nas direções horizontal e vertical. Ele é simples, eficiente e eficaz para detectar bordas em imagens com transições suaves.
+   
    * Laplaciano
+      R: O operador Laplaciano utiliza a segunda derivada da intensidade da imagem para identificar bordas, detectando mudanças bruscas de intensidade.
 
 6. (1,5 pontos) Na função `pipeline_processamento()` implementada, por que aplicamos equalização de histograma antes da detecção de bordas?
+      R: Para aumentar o contraste da imagem e destacar transições de intensidade. Isso melhora a precisão e a robustez do processo de detecção de bordas, especialmente em imagens com baixo contraste ou iluminação desigual.
 
 ### Parte 4: Aplicação Prática
 
@@ -56,10 +59,35 @@ img_bordas = img_equalizada.filter(ImageFilter.FIND_EDGES)
 img_final = img_bordas.point(lambda x: 255 if x > limiar else 0)
 ```
    * Qual o propósito da segunda linha?
+      R: Para deixar preto e branco.
+
    * Como a escolha do valor de limiar afeta o resultado final?
+      R: Limiar baixo: Detecta muitas bordas, mas inclui ruído.
+         Limiar ideal: Equilibra bordas reais e ruído, gerando um resultado limpo.
+         Limiar alto: Preserva apenas bordas fortes, descartando detalhes menores.
 
 8. (2,5 pontos) Descreva um pipeline completo para:
    * Detectar bordas em uma imagem com ruído
+R: Carregar a imagem:
+      from PIL import Image, ImageFilter, ImageOps
+      img = Image.open("imagem.jpg").convert("L")
+
+Reduzir ruído:
+img_suavizada = img.filter(ImageFilter.GaussianBlur(radius=2))
+
+Equalizar o histograma:
+img_equalizada = ImageOps.equalize(img_suavizada)
+
+Detectar bordas:
+img_bordas = img_equalizada.filter(ImageFilter.FIND_EDGES)
+
+Binarizar a imagem:
+limiar = 50
+img_binarizada = img_bordas.point(lambda x: 255 if x > limiar else 0)
+
+Salvar o resultado:
+img_binarizada.save("bordas_detectadas.jpg")
+
    * Justifique cada etapa do processo
    * Explique como você escolheria os parâmetros
 
